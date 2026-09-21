@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>生日数字解码 · 几号人 & 12组主性格 + 数字释义</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+        body {
+            background: #f5f7fa;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+        .card {
+            background: white;
+            max-width: 650px;
+            width: 100%;
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            padding: 32px 24px;
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.01em;
+        }
+        .sub {
+            color: #64748b;
+            font-size: 16px;
+            margin-bottom: 28px;
+            border-left: 4px solid #a78bfa;
+            padding-left: 16px;
+            background: #f8fafc;
+            border-radius: 0 12px 12px 0;
+            line-height: 1.5;
+        }
+        .input-group {
+            margin-bottom: 28px;
+        }
+        .label {
+            font-size: 15px;
+            font-weight: 500;
+            color: #334155;
+            display: block;
+            margin-bottom: 12px;
+        }
+        .row-inputs {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .birth-field {
+            flex: 1 1 0;
+            min-width: 90px;
+        }
+        .birth-field input {
+            width: 100%;
+            padding: 16px 8px;
+            font-size: 20px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            outline: none;
+            transition: all 0.2s;
+            background: #f8fafc;
+            font-weight: 500;
+            color: #0f172a;
+        }
+        .birth-field input:focus {
+            border-color: #a78bfa;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.15);
+        }
+        .birth-field .hint {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-top: 6px;
+            text-align: center;
+        }
+        .button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+        }
+        button {
+            flex: 1 1 auto;
+            background: white;
+            border: 2px solid #e2e8f0;
+            padding: 16px 12px;
+            border-radius: 40px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            transition: all 0.2s;
+            cursor: pointer;
+            background: #ffffff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+        button.primary {
+            background: #2dd4bf;
+            border-color: #2dd4bf;
+            color: #0f172a;
+        }
+        button.secondary {
+            background: #facc15;
+            border-color: #facc15;
+            color: #0f172a;
+        }
+        button.inner {
+            background: #f472b6;
+            border-color: #f472b6;
+            color: white;
+        }
+        button.outer {
+            background: #8b5cf6;
+            border-color: #8b5cf6;
+            color: white;
+        }
+        button.subconscious {
+            background: #f59e0b;
+            border-color: #f59e0b;
+            color: white;
+        }
+        button.family {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+        button.late {
+            background: #a855f7;
+            border-color: #a855f7;
+            color: white;
+        }
+        button.reset {
+            background: #94a3b8;
+            border-color: #94a3b8;
+            color: white;
+        }
+        button:active {
+            transform: scale(0.97);
+        }
+        .result-box {
+            background: #f1f5f9;
+            border-radius: 28px;
+            padding: 24px 20px;
+            border: 2px solid #e9eef3;
+        }
+        .result-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .result-title span {
+            background: #cbd5e1;
+            color: #1e293b;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 14px;
+        }
+        .number-large {
+            font-size: 52px;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.2;
+            margin-bottom: 8px;
+            text-align: center;
+            background: white;
+            padding: 16px;
+            border-radius: 32px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.02);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .number-large.clickable:hover {
+            background: #facc15;
+            border-color: #facc15;
+            transform: scale(1.02);
+        }
+        .group-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .group-item {
+            background: white;
+            border-radius: 20px;
+            padding: 16px 4px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            color: #0f172a;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .group-item:hover {
+            background: #facc15;
+            border-color: #facc15;
+            transform: scale(1.02);
+        }
+        .group-item small {
+            display: block;
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 400;
+            margin-top: 4px;
+        }
+        .meaning-box {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            border: 2px solid #cbd5e1;
+            margin-top: 16px;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #1e293b;
+            min-height: 80px;
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.02);
+        }
+        .meaning-box .meaning-title {
+            font-weight: 600;
+            color: #a78bfa;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        .meaning-placeholder {
+            color: #94a3b8;
+            text-align: center;
+            padding: 12px;
+            font-style: italic;
+        }
+        .error-message {
+            color: #dc2626;
+            font-size: 15px;
+            margin-top: 12px;
+            text-align: center;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>✨ 生日数字解码</h1>
+    <div class="sub">分别输入你的出生年、月、日。</div>
+
+    <div class="input-group">
+        <div class="label">📅 出生日期</div>
+        <div class="row-inputs">
+            <div class="birth-field">
+                <input type="text" id="birthYear" placeholder="" inputmode="numeric" maxlength="4">
+                <div class="hint">年 (4位)</div>
+            </div>
+            <div class="birth-field">
+                <input type="text" id="birthMonth" placeholder="" inputmode="numeric" maxlength="2">
+                <div class="hint">月 (1-12)</div>
+            </div>
+            <div class="birth-field">
+                <input type="text" id="birthDay" placeholder="" inputmode="numeric" maxlength="2">
+                <div class="hint">日 (1-31)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="button-group">
+        <button class="primary" id="btnPerson">🧑 你是几号人</button>
+        <button class="secondary" id="btnGroups">🔢 12组主性格</button>
+        <button class="inner" id="btnInner">🧠 内心密码</button>
+        <button class="outer" id="btnOuter">💫 外心密码</button>
+        <button class="subconscious" id="btnSubconscious">🌙 潜意识密码</button>
+        <button class="family" id="btnFamily">🏠 家庭密码</button>
+        <button class="late" id="btnLate">⏳ 晚年密码</button>
+        <button class="reset" id="btnReset">🧹 重置生日</button>
+    </div>
+
+    <div class="result-box" id="resultBox">
+        <div class="result-title">
+            ⭐ 结果
+            <span id="resultType">等待计算</span>
+        </div>
+        <div id="resultContent" style="min-height: 100px;">
+            <div style="color:#64748b; text-align:center; padding:24px 0;">点击按钮查看结果</div>
+        </div>
+        <div id="meaningDisplay" class="meaning-box">
+            <div class="meaning-placeholder">点击上方数字查看详细解释</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ==================== 数字释义库（完整版）====================
+        const meanings = {
+            "112": "性格独立、强势。做事纠结，容易半途而废，虎头蛇尾，说一套做一套。多读书，多突破自我，适合晚婚。注意过于自信的言谈在与人交往时，容易被陷害。喜欢冲动地为别人做事，但结果往往处理不好，还被人议论。化解之道是多读书，可少走弯路，或找有经验的人多学习，经过长期磨练或多读书。晚婚密码。",
+            "191": "独立自主，靠个人能力来达到事业上的成功和成就。当领导的号码，但要注意因过于关注事业而导致感情分裂。成功后可能还是一个人，夫妻情感需要修炼。很容易成功，喜欢享受独处的感觉，喜欢独立经营，所有的事独立包办，要成功要靠自己。但切忌不要太强势，否则容易成为孤独的管理者。晚婚（30岁以后）比较理想。",
+            "911": "独立自主，靠个人能力来达到事业上的成功和成就。当领导的号码，但要注意因过于关注事业而导致感情分裂。成功后可能还是一个人，夫妻情感需要修炼。很容易成功，喜欢享受独处的感觉，喜欢独立经营，所有的事独立包办，要成功要靠自己。但切忌不要太强势，否则容易成为孤独的管理者。晚婚（30岁以后）比较理想。",
+            "123": "说话直接有权威，对人生有很清楚的期望。口直心快，容易伤到人，遭到别人背后议论。需要学习讲话说重点，谨记祸从口出。懂得察言观色，反应快，给人感觉圆滑。经过学习培训可成为出色的演讲家，适合当演员。对事情很有主见，两组以上喜欢管事，在左边年轻时说话直接有人听。",
+            "213": "说话有权威婉转，往往年轻时就有丰富的资源，有说服力，在情绪下常因直接而伤人。爱好音乐，多愁善感，心地善良，但给人感觉圆滑，说话直接，喜欢命令别人。难题在于与人相处，爱情、友情都容易关系紧绷，开始时会努力表现友善，一旦发现事情的发展不如预期时，就会马上显出领导性格。",
+            "145": "独立而稳重，但太过保守。缺乏主动积极的勇气，需要别人的鼓励。不喜欢独处，有人相伴才会觉得安全。有很多计划，但行动力较弱。一个人干了很多人的活，但功劳都被别人领了。喜欢有后勤的强大支持。",
+            "415": "扰乱。非常聪明却又缺乏自信。觉得不值，需要人踹一脚。",
+            "156": "大男子、大女子主义。非常倔强，坚持自己的办事原则，只相信自己，喜欢让自己显得很重要，在熟悉的环境中容易自我，适合离开出生地发展会更好，从小出国很好。事业心重，喜欢坚持原则。面对难题时不愿意求助别人，在陌生的地方更加不受拘束，更容易展开新的局面。容易赢得别人的信任。",
+            "516": "性格倔强，把自己看得很重，坚持自己的原则，尤其是在处理事务时，但有时有点自我为中心。到处奔波，通常出国能找到财富。",
+            "167": "有看透事物本质的能力，悟性高，灵性很强。性格坚强、独立，善于解决问题。有过于奢侈的倾向，在乎外在形象，喜欢品牌的物品。为了取悦对方，可能会不顾一切。喜欢名牌货有品位的东西，一个人赚钱给很多人花。",
+            "617": "性格坚强独立，但在爱情面前却表现的很软弱。有时会为了取悦对方，不惜让自己受很大的委屈。对朋友很慷慨，喜欢赠送朋友们礼物。比较舍得给自己花钱，喜欢名牌或时尚的东西。悟性高，喜欢有品质的东西。钱不会花光，留一点私房钱。",
+            "178": "坚强独立，有突出的领袖气质，一个人面对很多压力，喜欢帮人。对马上就要实现的愿望，没有十足的信心。不管是做生意还是处理人际关系，要记得在距离上做文章。坐飞机可以转运，如果是在办公室工作，运气比较一般，身边的人会给压力。",
+            "718": "坚强独立，有领袖特质。弱点是在努力追求目标时反而裹足不前，会被朋友在背后议论，被人伤害。小心身边人，别做担保人。朋友特别多，朋友的事都和自己有关。",
+            "189": "来帮助别人的脚步。一个人承受所有的压力，寻找成功，抗压能力强，容易成功。完美主义者，爱干净，对自己跟家人要求都很高。重细节，对周围的人要求也很高。放松对别人要求会健康幸福。责任心重，有时候为了做得更好，压力很大。乐于助人却也常常为此困扰不已，一方面为付出没有回报而觉得不值，却又停不下来。",
+            "819": "是个勤劳而且事事关心的领导，压力越大越容易成功。常徘徊在帮人与不帮之间，经常付出多于回报，是一个很勤劳，很忙碌，要面对很多压力才能成功。",
+            "235": "外表温柔友善，内心感情丰富，做事讲究技巧，遇到难题可以巧妙化解，弱点是有一些固执，因此影响了感情的维护。发脾气时，给人一种挑衅和攻击的感觉，懂得运用沟通，把事情做好，但是注意言行必须一致。",
+            "325": "谈话的速度太快，常常忽略了讲话造成的后果。容易得罪别人，不肯变通，暴燥。有时说话有攻击性，很容易不知不觉得罪别人，很容易受激将，有时想出手段可能会被别人抓住把柄。切记祸从口出，凡事三思而后行。很懂得运用沟通，把事情做好，但是注意言行必须一致。号召力强，有资源整合的潜能。",
+            "246": "有着得天独厚的魅力，口才好，是善于沟通和表达的强手，言谈举止中会给人一种富有智慧的感觉，从事销售业务会有不菲的收益。",
+            "426": "做销售能赚钱，可以选择独立创业或和表达能力有关的职业。擅长处理人际关系，有牺牲精神，是非常出色的策划家和演说家。",
+            "257": "坚持原则，不懂变通，有着莫名其妙的独特魅力，会让自己成为别人关注的焦点，沟通能力强，有一种说一不二的强韧感。形象不错，明星脸，脾气有点，不喜欢的人不喜欢多说话，傲气，说话讲原则，固执而坚定，沟通能力强，不会委屈自己而讲，能吸引别人。",
+            "527": "讲话的态度会很生硬，尤其会将原则和权力作为焦点交谈的重点。生性固执，喜欢依照原则办事，但在处理事务时难免会遇到一些阻碍。人缘非常好，但是分别心过重会让人怯步。",
+            "268": "感恩、感性，喜欢为别人着想，所以人际关系也会很好。通过在销售或服务行业的发家可以学到很多财富，对金融投资有较多的兴趣，希望通过自己的努力去实现。对购物会有经济之效感。",
+            "628": "敏感、感性，将心比心，对别人的痛苦感同身受。喜欢信口开河，但人际关系不错。如果发挥口才方面的优势，会有不少财富。",
+            "279": "爽朗明快，温暖亲切，很有贵人缘，朋友很多也都愿意给你尽可能多的帮助。男性易走桃花运，但切记不可滥情，否则会失去很多可以帮助你的女性朋友。适合做女性事业，桃花运号码。",
+            "729": "温暖亲切，感情丰富，善解人意，身边会有很多朋友，而且他们也愿意回报你，有很好的桃花运，但切记不要滥情。",
+            "281": "在销售行业会有不错的发展，责任感也很强。有情绪，发脾气，总是匆匆忙忙，如果有没完成的任务，会给自己造成很大的心理压力。",
+            "821": "只能表扬，不能批评。喜欢听好话，不好听的话就当耳边风。性格固执，很多时候需要自己解决问题。感情丰富但多变，呈现既坚强又敏感的面貌。会给别人无形的压力，小时候有来自家庭的压力。",
+            "292": "想法很多，行动能力却较差，适合做别人的参谋。在做生意，投资产业等方面有先天的悟性，年轻时谨小慎微，只想不做，中年后若能把握机会，便成功在即。",
+            "922": "你有很强的说服力，喜欢就生意方面的问题发表自己的诸多看法，你有很好的抓住商机的天赋，但需要充分把握才能成功投资。",
+            "134": "喜欢流眼泪。点子很多，不过时常因为外来因素而半途而废。",
+            "314": "工作勤奋只注重过程，容易忽略目标，耐力不够，需要别人不断鼓励才能坚持下去，不管是男性还是女性，都过于感性，并且喜欢流眼泪，很聪明的人，不过太感性了。感性、易受委屈。",
+            "347": "具备策划能力，思维敏捷，反应迅速，能及时作出决定。有时表里不一，更因坏脾气给自己带来烦恼。过于小心翼翼，不爱冒险则会错过很多机会，习惯身体力行的管理模式。因为你的勤奋和策划能力，容易吸引朋友及贵人。",
+            "437": "一个精打细算的策划者，有能力吸引很多的支持者。吸引别人来做支持者时，要小心反被别人利用。迅速的规划者，能在很短的时间内完成工作。非常聪明的一个人，而且愿意干活，所以吸引到很多好帮手。",
+            "358": "有良好的沟通能力，能处理错综复杂的人际关系，是超强的业务代表，过于敏感，容易被激怒，但不良情绪很快就会消失。",
+            "538": "有良好的沟通能力，善于和陌生人打交道，如果是在销售行业发展自己的事业，会有不错的业绩。很容易被煽动，缺乏耐心。有点情绪化。脾气比较暴躁，容易冲动。",
+            "369": "容易相处，好恶分明，注重别人的痛苦；最大的问题来自于太聪明而想得多，喜欢沉醉在人生憧憬梦想的心灵世界里，如果缺乏引导和决策，梦想就永远无法实现。对于财富有挥金如土的特质，很会花钱，适当的投资会为你创造更大的财富。",
+            "639": "容易挥霍无度，比较花心；热衷投资，但有时候的投资行为显得过于冒失；有轻微的购物癖，会买很多用不上的东西；喜欢外出，不喜欢闷在家里。很会花钱，以小博大。",
+            "371": "才华洋溢，创造力丰富，是思考型的人物;疑心过重，重大事情面前犹豫不决;有可能会背叛支持者，赶走贵人，警惕在无意间拒绝别人的帮助。生活圈子的人时常会换，总是有许多朋友喜欢给你干活。",
+            "731": "才华洋溢，创造力丰富，原创思考型的人物；缺点是疑心过重，可能会影响到步入成功的巅峰；和朋友们相处不能久长。朋友的流动性特别的高。",
+            "382": "忙忙碌碌，却不知为谁辛苦为谁忙；极度情绪化，但脾气来得快，去得也快。年少创业困难，要避开在家里或办公室呆的时间过长，一般来说比较容易受委屈，需要找人倾诉，如果找不到人倾诉，就会发很大的脾气。",
+            "832": "敏感，容易被挑衅，情绪化，没耐性，容易被激怒，常被压力困扰，喜欢迅速完成手上的事情，但又因为重重阻碍而不能达到预期。一般上容易受委屈，要找人倾诉又不能倾诉，就会发很大的脾气。",
+            "393": "心智能力强，固执，过分的自我肯定，不喜欢求助别人，感情方面执迷不悟，喜欢钻牛角尖，拥有才艺的特质，如跳舞、书法、手艺、厨艺……",
+            "933": "有很多想法，有创意，喜欢帮家人安排所有的事业；有时候想法较为固执，注意范围无法扩展；你做的生意都很短期，你会在寻找合适的生意方面花费很多精力。拥有才艺的特质。脾气比较急躁。",
+            "459": "脚踏实地坚持原则，做事都有目的。为达目的有时候不择手段。若是企业家，可能会通过某种手段来达到目的。企业家数字，心想事成。对草本植物感兴趣。",
+            "549": "做任何事情都希望事前有计划，并且要按照原则办，在事情出现意料之外的情况时缺乏变通的能力，有时候会为了目标，不达目标不罢休。执着于目标，用所有不同的方法去达成一个目标。企业家数字，心想事成。对草本植物感兴趣。",
+            "461": "工作勤奋，个性稳重，自信心十足，对于如何获得财富有着不错的愿景和规划，适合做金融策划，能给别人带来财富，也能给自己带来不错的收入。",
+            "641": "小心翼翼的对待自己的钱财，消费时也很理智，是优秀的财务规划师，在学业上会花费很多的时间，喜欢涉猎新知识。",
+            "472": "分析能力强，善于解决当下的问题，喜欢计划未来，也乐于给别人出谋划策。要珍惜有丰富经验的人给你提供的帮助，适时抓住机会，你是别人的贵人，时常说好话忠告别人。善于解决问题，不喜欢冒险。",
+            "742": "会得到不少人的帮忙，很多你所尊重的人，经验丰富的人都会主动给你协助，或为你提供良好建议，身边有贵人给你忠告和指点。",
+            "483": "是个拥有专业才能的人，一流的副手，如果没有好好安排，就会迷迷糊糊过日子，需要有人带领才能施展才华，常处于压力之下，也因为缺乏决断力而使自己主导事情困难重重，如果有人带就完全不同。",
+            "843": "是个拥有专业才能的人，一流的副手，如果没有好好安排，就会迷迷糊糊过日子，需要有人带领才能施展才华，常处于压力之下，也因为缺乏决断力而使自己主导事情困难重重，如果有人带就完全不同。",
+            "494": "善于策划，并且一定一直会朝着成功的方向去经营自己的人生，具备一定的战略思维，看得较远，想得也很周全，如果能在商场中找到一席之地，前途不可限量。面子比较重要。企业家的号码，擅于策划。",
+            "944": "在事业上有机会发展，不过没有固定的目标，经常修改、规划你的事业，因为目标太多，不利于尽快成功，但一旦目标稳定，你就会经过周详计划，并取得较好利润。",
+            "562": "是一个非常谨慎的人，尤其是在使用金钱方面，崇尚理性消费，对于财务问题非常谨慎，不会冒险投资对金钱问题很有原则。花钱谨慎，适合讲故事，做文化。",
+            "652": "谨小慎微，面对任何事情都会考虑再三才做决定。在处理有关金钱方面的事物时，显得谨慎小心，对于投资大宗物品的购买，也总是犹豫不决。很聪明地花钱，所以变得很不舍得花钱，小气。",
+            "573": "有着充足的自信心，对自己的要求也很高，有机会接触高层次人士和社会名流，有机会和高级政府人员达成交易，喜欢品牌和奢侈品，高级贵人身边的朋友一般都是有钱人。",
+            "753": "朋友或支持者可能会背叛你，出卖你。你很会利用别人，但有时候反而会被小人利用。要小心你亲近的朋友，甚至是一直支持你的人，会用卑鄙的手段陷害你。容易吸引小人利用你，可是你还是觉得让你干活的人是看得起你。因此自己一定要正。",
+            "584": "是一个非常有创意的人，不过所有事情，都必须自己承担，想太多太遥远的事情，无法活在当下，只处于某一个想法，想了好久都没行动。看起来总是那么繁忙和迷茫，缺乏重点。",
+            "854": "一个很有创意的人，想法过多，难免会给自己带来没有必要的麻烦，无法活在当下，遇到障碍就会很悲观，想法比较远。总是在策划中，没有活在当下。情感方面会有压力，只让自己承担的事业显得负累。",
+            "595": "非常固执，思维方式极为古板，不把法律看在眼里，如果是女性的话，会用某种手段获取想要的东西。天不怕地不怕，不按常理出牌。",
+            "955": "会有很多解决不了的问题，想要很多东西，而且得不到就会很不开心，比较自私自利，这使得你很容易占小便宜吃大亏，通常自己是成功的绊脚石。",
+            "674": "做事有一定的目的性，尤其喜欢用金钱收买有权势、有影响力的人；在遇到较难解决的问题时，首先会想到用金钱打开门路。很舍得花钱请人吃东西，人家就会给你干活。",
+            "764": "你是一个很幸运的人，会遇到贵人和支持者，还能在智慧和资本方面得到很好的援助；有一些不错的朋友，但要处理他们和你之间的借贷关系。容易收获意外的财富，并且有机会获得遗产或祖传的技术，横财很多，有机会获得遗产，或者有人和你合作创业。",
+            "685": "赚钱很不容易，投资又不会轻易获得回报；总是为谋生，奔走忙碌，会有时压力重重；建议多做一些善事。在金钱方面反而不招自来。",
+            "865": "多做善事，注意健康，一定提前养生。研究，比较牛，固执。",
+            "696": "你是一个能承担风险的人，您的事业与生意都会成功的。喜爱投资，是一个冒险家。不可以赌，只能做理性投资方能获得更多财富。点石成金，投资数。",
+            "966": "有很好的运程，尤其是在做生意或投资方面，只要稍微努力一下就会有很好的利润或回报，很容易找到投资者，有点石成金的本事。很容易获得财富。",
+            "786": "你有很多的男性贵人会支持你，他们会为了你的成功而向你施压，你若能处理好，并且接受挑战，获得更多财富。你是一位愿意刻苦耐劳的好员工，贵人给你压力了，你才会获得财富，如你的老板。",
+            "876": "你是一个很勤勉的人，但是会给你周围的人带来许多压力。辛勤劳作的你会遇到欣赏你的男上司，他会给你很多压力。你会给贵人脸色看，比方说给老板。勤奋努力。",
+            "797": "支持者会协助你达到成就，或者有可能会有兴趣和你发展成为生意伙伴。身边朋友特别多，比较容易得到别人的提携。要正念打造团队，千万不要利用人。",
+            "977": "有很好的理财头脑，做生意或搞投资都会有很丰厚的报酬。身边有贵人，也有小人，如不利用人就不会遇上小人，是一个有号召力魅力型的人。人缘特别好，时常会有贵人给他机会，人缘好，疑心重。",
+            "898": "在意别人的看法，容易钻牛角尖。从表面上看来，你的事业或者生意都很让人羡慕，但实际上你总是被压力和紧张的情绪所困扰，并且一直在努力摆脱这种困境。太在意别人对你的评价，很在意别人怎么看待自己，容易钻牛角尖。生意可能大起大落，不可做偏门，不可赌。",
+            "988": "生意上会带给你各种没有必要的压力，这让你总是为此付出很多的时间与精力，浪费许多时间四处奔波、忙碌，拥有很大的企图心。男人注意肾脏问题，女人注意子宫问题，不可以做旁门左道的生意，野心特别大。忙，压力大。注意生殖系统。",
+            "224": "渴望安全感，没有胆量做冒险的事；心慈面软，善解人意，但不太懂得保守秘密；适合从事服务行业，性格偏向女性化。心很软，秘密很容易不小心从你口中说出来。",
+            "448": "喜欢做计划，有了计划才有激情，但过多的计划会让你的压力过重，而且没有重点；天资聪慧，想法很多，但只会纸上谈兵，行动力较弱。想法比较多，行动比较少。",
+            "551": "性格倔强，认死理，甚至于为了面子不惜错过成功的机会；坏脾气，情绪化，明知道自己错了，就是不肯回头；思想偏向古老，没主见。因为比较固执，所以当情感放不下的时候，可能会自虐（身体或精神）。",
+            "775": "你是个非常幸运的人，所有的障碍会被克服，有许多支持者，会尽量利用支持者，有权威的领导者，会吸引异性，拥有很多的支持者，不过你也有可能会利用他们，愿意为朋友两肋插刀，基于面子，勉强自己满足朋友的请求。",
+            "336": "崇尚精神上的满足，极度情绪化，容易冲动，缺乏耐性，只要有行动依赖其天赋是可以赚到钱的，切记不要参与任何赌博或类似的活动。时常发情绪就容易破财。",
+            "663": "在赚钱的道路上一波三折，很难积累资金；有时花钱太冲动，容易失去理智，不顾后果；喜欢吹牛，脾气大，容易被激怒。有很多机会，钱在你身上转来转去，人生容易大起大落。",
+            "887": "你是一个很忙碌、情绪化和处于许多压力之下的人，太多的压力让你无法集中精神；要珍惜贵人的帮忙，不要让他们失望。比较容易遇到很多烦心事，责任都是一个人扛。",
+            "666": "对生意有敏锐的眼光，拥有许多做生意的方法，能掌握许多生意机会；但如果做事不专一，会失去很多良好的生意机会。有很多成功的机会，要注意不可太贪心。",
+            "133": "暂无详细官方解释，可能结合了1的独立与3的创意，具体请参考相关书籍。",
+            "538": "有良好的沟通能力，善于和陌生人打交道，如果是在销售行业发展自己的事业，会有不错的业绩。很容易被煽动，缺乏耐心。有点情绪化。脾气比较暴躁，容易冲动。"
+        };
+
+        // ==================== 1-9数字能量解释 ====================
+        const personMeanings = {
+            "1": "🔹 高频·正面：独立，创意，勇敢，力量，创造性，号召力，果断，原创性，独特，进取，乐观，可信任\n🔸 低频·负面：自我为中心，说教，偏执，自私，冲动，傲慢自大，咄咄逼人，吹牛，冷酷，苛求，虚荣，居高临下，强硬，攀比\n💭 忧虑·恐惧：伤自尊，不被重视，做配角，不如别人",
+            "2": "🔹 高频·正面：耐心，宽容，善于分析，沟通，直觉力强，美感出色，配合协调，可靠，安静，平和，善解人意\n🔸 低频·负面：依附，左右不定，无主见，过度敏感，软弱，善于讨好献媚，抱怨，愚昧，沮丧，利用他人，缺乏独立性\n💭 忧虑·恐惧：独处，做决定，无依靠",
+            "3": "🔹 高频·正面：聪明，热情，想象力丰富，有创意，幽默感，充满活力，善于表达，擅社交，多才多艺，有趣，乐观，有激情\n🔸 低频·负面：夸张，做作，缺乏方向，自我怀疑，搬弄是非，幼稚，逃避现实，肤浅，虚荣，不休，撒谎，铺张浪费\n💭 忧虑·恐惧：被限制，无聊，面对现实，不被关注",
+            "4": "🔹 高频·正面：实际，组织力，可靠，实干，诚恳，有勇气，任劳任怨，未雨绸缪，稳重，做事认真，坚定，忠实，逻辑分明\n🔸 低频·负面：过于谨慎，约束，拒绝改变，自我保护，挑剔，嫉妒心，吝啬，心胸狭窄，缺乏想象力，说教，不变通，无趣乏味\n💭 忧虑·恐惧：变化，不稳定，生活危机",
+            "5": "🔹 高频·正面：自由，冒险，适应力强，多才多艺，随遇而安，幽默感，真诚，有远见，善自我开脱，易接受新事物\n🔸 低频·负面：烦躁不安，无常，爱拖延，惰性，华而不实，顽固，散漫无序，缺乏恒心，情绪化，爱嘲讽，精力不集中，狡猾，浪费，不可靠\n💭 忧虑·恐惧：承诺，压力，承担责任，一成不变",
+            "6": "🔹 高频·正面：可信，忠实，爱和平，有同情心，可以承担，助人，亲和体贴，治疗他人，公正，奉献精神，荣誉感强，有担当，负责，直觉力，美的鉴赏\n🔸 低频·负面：焦虑，挑剔，苛刻，自怜，保守封闭，得失心重，盲目付出，施加压力，自私，多管闲事，沉闷，嘴碎，自以为是\n💭 忧虑·恐惧：承诺后的兑现，付出无回报，缺乏价值",
+            "7": "🔹 高频·正面：智慧，灵性，分析力强，神秘，专注，内省，完美主义，哲学意味，幸运\n🔸 低频·负面：自负，疑心重，孤僻，偏激，冷漠，过刚，与人保持距离，奸诈，挑剔，缺乏同情心\n💭 忧虑·恐惧：犯错，无知，被欺骗",
+            "8": "🔹 高频·正面：领导力，果断，勇敢，专注，有魄力，能屈能伸，智谋出众，大度，有商业头脑，正义感\n🔸 低频·负面：控制欲，易怒，急于成功，好权力，虚荣，势利眼，投机取巧，滥用职权，唯利是图，攀比，赌性\n💭 忧虑·恐惧：失去威望，被人怜悯，平庸，失败，贫穷",
+            "9": "🔹 高频·正面：博爱，慈悲，灵性，智慧，奉献，公益，服务，艺术，浪漫，诚恳\n🔸 低频·负面：情性，妄想，不拒绝，消极，迷信，爱心泛滥，拯救欲过强，情绪沮丧，情感软弱，自我贬低，不现实\n💭 忧虑·恐惧：任何形式的限制，幻想破灭，希望落空",
+        };
+
+        // 工具函数：将数字化简到个位数（数字根）
+        function reduceToSingle(num) {
+            let n = typeof num === 'number' ? num : parseInt(num, 10);
+            if (isNaN(n)) return 0;
+            while (n >= 10) {
+                let s = n.toString();
+                n = 0;
+                for (let ch of s) {
+                    n += parseInt(ch, 10);
+                }
+            }
+            return n;
+        }
+
+        // 带0+0=5规则的加法
+        function addWithZeroRule(a, b) {
+            if (a === 0 && b === 0) return 5;
+            return reduceToSingle(a + b);
+        }
+
+        // 获取并验证输入
+        function getBirthdayDigits() {
+            const yearInput = document.getElementById('birthYear');
+            const monthInput = document.getElementById('birthMonth');
+            const dayInput = document.getElementById('birthDay');
+
+            let year = yearInput.value.trim();
+            let month = monthInput.value.trim();
+            let day = dayInput.value.trim();
+
+            if (!year || !month || !day) {
+                throw new Error('请完整填写年、月、日');
+            }
+
+            year = year.replace(/\D/g, '');
+            month = month.replace(/\D/g, '');
+            day = day.replace(/\D/g, '');
+
+            if (year.length !== 4) {
+                throw new Error('年份必须为4位数字（例如 2011）');
+            }
+
+            if (month.length === 1) {
+                month = '0' + month;
+            } else if (month.length !== 2) {
+                throw new Error('月份请输入1-2位数字（例如 11 或 1）');
+            }
+
+            if (day.length === 1) {
+                day = '0' + day;
+            } else if (day.length !== 2) {
+                throw new Error('日期请输入1-2位数字（例如 14 或 5）');
+            }
+
+            const monthNum = parseInt(month, 10);
+            if (monthNum < 1 || monthNum > 12) {
+                throw new Error('月份应在01-12之间');
+            }
+
+            const dayNum = parseInt(day, 10);
+            if (dayNum < 1 || dayNum > 31) {
+                throw new Error('日期应在01-31之间');
+            }
+
+            const birthdayStr = year + month + day;
+            if (birthdayStr.length !== 8) {
+                throw new Error('生日组合无效，请检查输入');
+            }
+
+            return birthdayStr.split('').map(ch => parseInt(ch, 10));
+        }
+
+        // 几号人（两两相加，直至一位数，应用0+0=5规则）
+        function computePersonNumber(digits) {
+            let nums = digits.slice(); // 复制数组
+            while (nums.length > 1) {
+                let next = [];
+                for (let i = 0; i < nums.length; i += 2) {
+                    if (i + 1 < nums.length) {
+                        next.push(addWithZeroRule(nums[i], nums[i+1]));
+                    } else {
+                        next.push(nums[i]); // 奇数个时，最后一个保留
+                    }
+                }
+                nums = next;
+            }
+            return nums[0];
+        }
+
+        // 内心密码：所有数字相加求数字根 → 乘以2 → 再求数字根
+        function computeInnerCode(digits) {
+            let sum = digits.reduce((acc, d) => acc + d, 0);
+            let root = reduceToSingle(sum);
+            let doubled = root * 2;
+            return reduceToSingle(doubled);
+        }
+
+        // 计算中间变量 A, B, C（用于外心和潜意识）
+        function computeABC(digits) {
+            const d1 = digits[0], d2 = digits[1], d3 = digits[2], d4 = digits[3];
+            const d5 = digits[4], d6 = digits[5];
+            const d7 = digits[6], d8 = digits[7];
+
+            const daySum = addWithZeroRule(d7, d8);
+            const monthSum = addWithZeroRule(d5, d6);
+            const yearFront = addWithZeroRule(d1, d2);
+            const yearBack = addWithZeroRule(d3, d4);
+
+            const A = addWithZeroRule(daySum, monthSum);
+            const B = addWithZeroRule(yearFront, yearBack);
+            const C = addWithZeroRule(A, B);
+            return { daySum, monthSum, yearFront, yearBack, A, B, C };
+        }
+
+        // 外心密码（保留算法，但显示为无解释的数字）
+        function computeOuterCode(digits) {
+            const { daySum, monthSum, yearFront, yearBack, A, B, C } = computeABC(digits);
+            const a1 = addWithZeroRule(A, daySum);
+            const a2 = addWithZeroRule(A, monthSum);
+            const Z = addWithZeroRule(a1, a2);
+            const b1 = addWithZeroRule(B, yearFront);
+            const b2 = addWithZeroRule(B, yearBack);
+            const X = addWithZeroRule(b1, b2);
+            const v1 = addWithZeroRule(A, C);
+            const v2 = addWithZeroRule(B, C);
+            const V = addWithZeroRule(v1, v2);
+            return `${Z}${V}${X}`; // 三位数
+        }
+
+        // 潜意识密码：日期和 + 年份后两位和 + C，化简到个位数
+        function computeSubconsciousCode(digits) {
+            const { daySum, yearBack, C } = computeABC(digits);
+            const temp = addWithZeroRule(daySum, yearBack);
+            const result = addWithZeroRule(temp, C);
+            return result; // 个位数
+        }
+
+        // 家庭密码：月份和 与 年份前两位和 拼接成两位数（月份和在前）
+        function computeFamilyCode(digits) {
+            const d1 = digits[0], d2 = digits[1], d3 = digits[2], d4 = digits[3];
+            const d5 = digits[4], d6 = digits[5];
+            // 月份和
+            const monthSum = addWithZeroRule(d5, d6);
+            // 年份前两位和
+            const yearFront = addWithZeroRule(d1, d2);
+            // 拼接成两位数，如果月份和或年份前两位和是0，则显示为比如05、50等
+            const result = monthSum.toString() + yearFront.toString();
+            return result; // 两位数（可能包含前导零，如"05"）
+        }
+
+        // 晚年密码：年份前两位的和+后两位的和 = C；前两位的和+C 与 后两位的和+C 相加
+        function computeLateLifeCode(digits) {
+            const d1 = digits[0], d2 = digits[1], d3 = digits[2], d4 = digits[3];
+            const yearFront = addWithZeroRule(d1, d2);
+            const yearBack = addWithZeroRule(d3, d4);
+            const C = addWithZeroRule(yearFront, yearBack);
+            const left = addWithZeroRule(yearFront, C);
+            const right = addWithZeroRule(yearBack, C);
+            const result = addWithZeroRule(left, right);
+            return result; // 个位数
+        }
+
+        // 12组主性格（已验证多个生日，并加入0+0=5规则）
+        function computeGroups(digits) {
+            const d1 = digits[0], d2 = digits[1], d3 = digits[2], d4 = digits[3],
+                  d5 = digits[4], d6 = digits[5], d7 = digits[6], d8 = digits[7];
+
+            const c12 = addWithZeroRule(d1, d2);
+            const c34 = addWithZeroRule(d3, d4);
+            const c56 = addWithZeroRule(d5, d6);
+            const c78 = addWithZeroRule(d7, d8);
+
+            const x1 = addWithZeroRule(c56, c78);
+            const x2 = addWithZeroRule(c12, c34);
+            const x3 = addWithZeroRule(x1, x2);
+
+            const e = addWithZeroRule(x1, c56);
+            const f = addWithZeroRule(x1, c78);
+            const g = addWithZeroRule(x2, c12);
+            const h = addWithZeroRule(x2, c34);
+
+            const p = addWithZeroRule(x1, x3);
+            const q = addWithZeroRule(x2, x3);
+            const r = addWithZeroRule(f, e);
+            const s = addWithZeroRule(q, p);
+
+            const groups = [
+                [c56, x1, e],   // 1
+                [c78, x1, f],   // 2
+                [c12, x2, g],   // 3
+                [c34, x2, h],   // 4
+                [x2, x3, q],    // 5
+                [x1, x3, p],    // 6
+                [c78, c56, x1], // 7
+                [f, e, r],      // 8
+                [c12, c34, x2], // 9
+                [x1, x2, x3],   // 10
+                [q, p, s],      // 11
+                [g, h, addWithZeroRule(g, h)] // 12
+            ];
+
+            return groups.map(triple => triple.join(''));
+        }
+
+        // 显示几号人
+        function showPerson() {
+            const resultType = document.getElementById('resultType');
+            const resultContent = document.getElementById('resultContent');
+            const meaningDisplay = document.getElementById('meaningDisplay');
+            try {
+                const digits = getBirthdayDigits();
+                const personNum = computePersonNumber(digits);
+                resultType.innerText = '几号人';
+                resultContent.innerHTML = `
+                    <div class="number-large clickable" data-person="${personNum}">${personNum}</div>
+                    <div style="text-align:center; color:#475569;">你的主性格数字（点击查看解释）</div>
+                `;
+                meaningDisplay.innerHTML = `<div class="meaning-placeholder">点击上方数字查看详细解释</div>`;
+
+                const personEl = document.querySelector('.number-large');
+                if (personEl) {
+                    personEl.addEventListener('click', function(e) {
+                        const num = this.getAttribute('data-person');
+                        const meaning = personMeanings[num] || '暂无解释';
+                        meaningDisplay.innerHTML = `
+                            <div class="meaning-title">🔍 数字 ${num} 的能量解释</div>
+                            <div style="white-space: pre-line;">${meaning}</div>
+                        `;
+                    });
+                }
+            } catch (e) {
+                resultType.innerText = '错误';
+                resultContent.innerHTML = `<div class="error-message">⚠️ ${e.message}</div>`;
+                meaningDisplay.innerHTML = `<div class="meaning-placeholder">等待输入</div>`;
+            }
+        }
+
+        // 显示内心密码（暂无解释，无点击）
+        function showInnerCode() {
+            const resultType = document.getElementById('resultType');
+            const resultContent = document.getElementById('resultContent');
+            const meaningDisplay = document.getElementById('meaningDisplay');
+            try {
+                const digits = getBirthdayDigits();
+                const innerNum = computeInnerCode(digits);
+                resultType.innerText = '内心密码';
+                resultContent.innerHTML = `
+                    <div class="number-large" style="cursor: default;">${innerNum}</div>
+                    <div style="text-align:center; color:#475569;">你的内心密码数字（暂无解释）</div>
+                `;
+                meaningDisplay.innerHTML = `<div class="meaning-placeholder">点击上方数字暂无解释</div>`;
+            } catch (e) {
+                resultType.innerText = '错误';
+                resultContent.innerHTML = `<div class="error-message">⚠️ ${e.message}</div>`;
+                meaningDisplay.innerHTML = `<div class="meaning-placeholder">等待输入</div>`;
+            }
+        }
+
+        // 显示外心密码（暂无解释，无点击）
+        function showOuterCode() {
+            const resultType = document.getElementById('resultType');
+            const resultContent = document.getElementById('resultContent');
+            const meaningDisplay = document.getElementById('meaningDisplay');
+            try {
+                const digits = getBirthdayDigits();
+                const outerNum = computeOuterCode(digits);
+                resultType.innerText = '外心密码';
+                resultContent.innerHTML = `
+                    <div class="number-large" style="cursor: default;">${outerNum}</div>
+                    <div style="text-align:center; color:#475569;">你的外心密码（暂无解释）</div>
+                `;
+                meaningDisplay.innerHTML = `<div class="meaning-placeholder">点击上方数字暂无解释</div>`;
+            } catch (e) {
+                resultType.innerText = '错误';
+                resultContent.innerHTML = `<div class="error-message">⚠️ ${e.message}</div>`;
+                meaningDisplay.innerHTML = `<div class="meaning-placeholder">等待输入</div>`;
+            }
+        }
+
+        // 显示潜意识密码（暂无解释，无点击）
+        function showSubconsciousCode() {
+            const resultType = document.getElementById('resultType');
+            const resultContent = document.getElementById('resultContent');
+            const meaningDisplay = document.getElementById('meaningDisplay');
+            try {
+                const digits = getBirthdayDigits();
+                const subNum = computeSubconsciousCode(digits);
+                resultType.innerText = '潜意识密码';
+                resultContent.innerHTML = `
+                    <div class="number-large" style="cursor: default;">${subNum}</div>
+                    <div style="text-align:center; color:#475569;">你的潜意识密码数字（暂无解释）</div>
+                `;
+                meaningDisplay.innerHTML = `<div class="meaning-placeholder">点击上方数字暂无解释</div>`;
+            } catch (e) {
+                resultType.innerText = '错误';
+                resultContent.innerHTML = `<div class="error-message">⚠️ ${e.message}</div>`;
+                meaningDisplay.innerHTML = `<div class="meaning-placeholder">等待输入</div>`;
+            }
+        }
+
+        // 显示家庭密码（暂无解释，无点击）
+        function showFamilyCode() {
+            const resultType = document.getElementById('resultType');
+            const resultContent = document.getElementById('resultContent');
+            const meaningDisplay = document.getElementById('meaningDisplay');
+            try {
+                const digits = getBirthdayDigits();
+                const familyNum = computeFamilyCode(digits);
+                resultType.innerText = '家庭密码';
+                resultContent.innerHTML = `
+                    <div class="number-large" style="cursor: default;">${familyNum}</div>
+                    <div style="text-align:center; color:#475569;">你的家庭密码（暂无解释）</div>
+                `;
+                meaningDisplay.innerHTML = `<div class="meaning-placeholder">点击上方数字暂无解释</div>`;
+            } catch (e) {
+                resultType.innerText = '错误';
+                resultContent.innerHTML = `<div class="error-message">⚠️ ${e.message}</div>`;
+                meaningDisplay.innerHTML = `<div class="meaning-placeholder">等待输入</div>`;
+            }
+        }
+
+        // 显示晚年密码（暂无解释，无点击）
+        function showLateLifeCode() {
+            const resultType = document.getElementById('resultType');
+            const resultContent = document.getElementById('resultContent');
+            const meaningDisplay = document.getElementById('meaningDisplay');
+            try {
+                const digits = getBirthdayDigits();
+                const lateNum = computeLateLifeCode(digits);
+                resultType.innerText = '晚年密码';
+                resultContent.innerHTML = `
+                    <div class="number-large" style="cursor: default;">${lateNum}</div>
+                    <div style="text-align:center; color:#475569;">你的晚年密码数字（暂无解释）</div>
+                `;
+                meaningDisplay.innerHTML = `<div class="meaning-placeholder">点击上方数字暂无解释</div>`;
+            } catch (e) {
+                resultType.innerText = '错误';
+                resultContent.innerHTML = `<div class="error-message">⚠️ ${e.message}</div>`;
+                meaningDisplay.innerHTML = `<div class="meaning-placeholder">等待输入</div>`;
+            }
+        }
+
+        // 显示12组主性格并绑定点击事件
+        function showGroups() {
+            const resultType = document.getElementById('resultType');
+            const resultContent = document.getElementById('resultContent');
+            const meaningDisplay = document.getElementById('meaningDisplay');
+            try {
+                const digits = getBirthdayDigits();
+                const groups = computeGroups(digits);
+                resultType.innerText = '12组主性格';
+                let html = '<div class="group-grid" id="groupGrid">';
+                groups.forEach((num, idx) => {
+                    html += `<div class="group-item" data-number="${num}">${num}<small>${idx+1}</small></div>`;
+                });
+                html += '</div>';
+                const birthdayStr = digits.join('');
+                html += `<div style="margin-top:8px; font-size:14px; color:#64748b; text-align:center;">输入生日: ${birthdayStr}</div>`;
+                resultContent.innerHTML = html;
+
+                meaningDisplay.innerHTML = `<div class="meaning-placeholder">点击上方数字查看详细解释</div>`;
+
+                const items = document.querySelectorAll('.group-item');
+                items.forEach(item => {
+                    item.addEventListener('click', function(e) {
+                        const number = this.getAttribute('data-number');
+                        const meaning = meanings[number] || '暂无解释';
+                        meaningDisplay.innerHTML = `
+                            <div class="meaning-title">🔍 ${number} 的解释</div>
+                            <div>${meaning}</div>
+                        `;
+                    });
+                });
+            } catch (e) {
+                resultType.innerText = '错误';
+                resultContent.innerHTML = `<div class="error-message">⚠️ ${e.message}</div>`;
+                meaningDisplay.innerHTML = `<div class="meaning-placeholder">等待输入</div>`;
+            }
+        }
+
+        // 重置生日
+        function resetBirthday() {
+            document.getElementById('birthYear').value = '';
+            document.getElementById('birthMonth').value = '';
+            document.getElementById('birthDay').value = '';
+            // 清空结果区域
+            document.getElementById('resultType').innerText = '等待计算';
+            document.getElementById('resultContent').innerHTML = '<div style="color:#64748b; text-align:center; padding:24px 0;">点击按钮查看结果</div>';
+            document.getElementById('meaningDisplay').innerHTML = '<div class="meaning-placeholder">点击上方数字查看详细解释</div>';
+        }
+
+        // 绑定按钮
+        document.getElementById('btnPerson').addEventListener('click', showPerson);
+        document.getElementById('btnGroups').addEventListener('click', showGroups);
+        document.getElementById('btnInner').addEventListener('click', showInnerCode);
+        document.getElementById('btnOuter').addEventListener('click', showOuterCode);
+        document.getElementById('btnSubconscious').addEventListener('click', showSubconsciousCode);
+        document.getElementById('btnFamily').addEventListener('click', showFamilyCode);
+        document.getElementById('btnLate').addEventListener('click', showLateLifeCode);
+        document.getElementById('btnReset').addEventListener('click', resetBirthday);
+
+        // 输入框限制数字
+        const inputs = ['birthYear', 'birthMonth', 'birthDay'];
+        inputs.forEach(id => {
+            const el = document.getElementById(id);
+            el.addEventListener('input', function(e) {
+                this.value = this.value.replace(/\D/g, '').slice(0, this.maxLength);
+            });
+        });
+    })();
+</script>
+</body>
+</html>
