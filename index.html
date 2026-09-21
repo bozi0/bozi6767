@@ -39,6 +39,7 @@
             user-select: none;
         }
 
+        /* 背景极光流影（神版） */
         body::before {
             content: '';
             position: absolute;
@@ -186,7 +187,6 @@
 
         .action-btn:active { transform: scale(0.95); }
 
-        /* ==================== 核心修复：结果容器 ==================== */
         .result-stage {
             flex: 1;
             position: relative;
@@ -198,7 +198,7 @@
             transform: translateY(15px);
             transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             pointer-events: none;
-            overflow-y: auto; /* 关键：允许内部滚动 */
+            overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
         }
@@ -211,7 +211,6 @@
             pointer-events: auto;
         }
 
-        /* 居中包装器：解决 flex 居中 + 溢出滚动的裁剪 bug */
         .center-wrapper {
             width: 100%;
             margin: auto 0;
@@ -221,7 +220,6 @@
             padding: 10px 0 30px;
         }
 
-        /* 霓虹大数字 */
         .neon-number {
             font-size: 88px;
             font-weight: 900;
@@ -264,11 +262,10 @@
             backdrop-filter: blur(10px);
         }
 
-        /* ==================== 12组主性格重构（缩小比例，适配小屏） ==================== */
         .group-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 8px; /* 缩小间距 */
+            gap: 12px;
             width: 100%;
             padding: 0 4px;
             margin-top: 10px;
@@ -279,8 +276,8 @@
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 14px; /* 减小圆角 */
-            padding: 12px 2px; /* 大幅缩小内边距 */
+            border-radius: 16px;
+            padding: 14px 4px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -299,10 +296,10 @@
         }
 
         .group-item .num {
-            font-size: 20px; /* 缩小字号 */
+            font-size: 22px;
             font-weight: 900;
             color: #ffffff;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
             background: linear-gradient(180deg, #fff, #a78bfa);
             -webkit-background-clip: text;
             background-clip: text;
@@ -310,22 +307,22 @@
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
         }
 
-        .group-item .idx {
-            font-size: 9px; /* 缩小字号 */
-            color: var(--text-sub);
-            margin-top: 6px;
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.08);
+        .group-item .multiplier {
+            font-size: 11px;
+            color: #c4b5fd;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            border-radius: 6px;
             padding: 1px 6px;
-            border-radius: 8px;
-            backdrop-filter: blur(4px);
+            margin-top: 6px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .group-item.no-meaning {
             cursor: default;
             background: rgba(255, 255, 255, 0.02);
             border-color: rgba(255, 255, 255, 0.05);
-            box-shadow: none;
         }
 
         .group-item.no-meaning .num {
@@ -335,61 +332,66 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .group-item.no-meaning .idx {
-            background: rgba(255, 255, 255, 0.03);
+        .group-item.no-meaning .multiplier {
             color: #64748b;
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
         }
 
-        .bottom-sheet {
+        .group-item.no-meaning:active {
+            transform: none;
+            background: rgba(255, 255, 255, 0.02);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* 居中弹窗（从底部浮到中间） */
+        .modal {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
+            top: 50%;
+            left: 50%;
+            width: 90%;
+            max-width: 400px;
             max-height: 75vh;
             background: rgba(18, 18, 24, 0.95);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
-            border-top-left-radius: 28px;
-            border-top-right-radius: 28px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 28px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
             z-index: 1000;
-            transform: translateY(100%);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: translate(-50%, 100%) scale(0.9);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
             display: flex;
             flex-direction: column;
-            padding-bottom: var(--safe-bottom);
-            will-change: transform;
+            will-change: transform, opacity;
         }
 
-        .bottom-sheet.open { transform: translateY(0); }
-
-        .sheet-handle {
-            width: 40px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            margin: 12px auto 8px;
-            cursor: grab;
+        .modal.open {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            pointer-events: auto;
         }
 
-        .sheet-content {
-            padding: 8px 20px 24px;
+        .modal-content {
+            padding: 24px;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            max-height: 75vh;
         }
 
-        .sheet-title {
-            font-size: 17px;
+        .modal-title {
+            font-size: 18px;
             font-weight: 700;
             color: var(--primary-glow);
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
-        .sheet-text {
+        .modal-text {
             font-size: 15px;
             line-height: 1.8;
             color: #cbd5e1;
@@ -468,21 +470,17 @@
         <button class="action-btn" data-action="reset" style="color:#ef4444; border-color:rgba(239,68,68,0.3)"><span class="icon">🧹</span>重置</button>
     </div>
 
-    <!-- 结果区，加上了独立的滚动处理 -->
     <div class="result-stage show" id="resultStage">
-        <div id="resultDisplay">
-            <!-- 内容动态插入 -->
-        </div>
+        <div id="resultDisplay"></div>
     </div>
 </div>
 
 <div class="overlay" id="overlay"></div>
 
-<div class="bottom-sheet" id="bottomSheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-content">
-        <div class="sheet-title" id="sheetTitle">🔍 数字解释</div>
-        <div class="sheet-text" id="sheetText">内容加载中...</div>
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <div class="modal-title" id="modalTitle">🔍 数字解释</div>
+        <div class="modal-text" id="modalText">内容加载中...</div>
     </div>
 </div>
 
@@ -735,49 +733,28 @@
         // ==================== UI 交互渲染逻辑 ====================
         const resultDisplay = document.getElementById('resultDisplay');
         const resultStage = document.getElementById('resultStage');
-        const bottomSheet = document.getElementById('bottomSheet');
+        const modal = document.getElementById('modal');
         const overlay = document.getElementById('overlay');
-        const sheetTitle = document.getElementById('sheetTitle');
-        const sheetText = document.getElementById('sheetText');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalText = document.getElementById('modalText');
 
-        function openSheet(title, text) {
-            sheetTitle.innerText = title;
-            sheetText.innerText = text;
-            bottomSheet.classList.add('open');
+        function openModal(title, text) {
+            modalTitle.innerText = title;
+            modalText.innerText = text;
+            modal.classList.add('open');
             overlay.classList.add('show');
         }
 
-        function closeSheet() {
-            bottomSheet.classList.remove('open');
+        function closeModal() {
+            modal.classList.remove('open');
             overlay.classList.remove('show');
         }
 
-        overlay.addEventListener('click', closeSheet);
+        overlay.addEventListener('click', closeModal);
 
-        let startY = 0;
-        bottomSheet.addEventListener('touchstart', e => {
-            if (e.target.closest('.sheet-handle') || bottomSheet.scrollTop === 0) {
-                startY = e.touches[0].clientY;
-            }
-        }, { passive: true });
-
-        bottomSheet.addEventListener('touchmove', e => {
-            if (startY > 0) {
-                const dy = e.touches[0].clientY - startY;
-                if (dy > 0) bottomSheet.style.transform = `translateY(${dy}px)`;
-            }
-        }, { passive: true });
-
-        bottomSheet.addEventListener('touchend', () => {
-            bottomSheet.style.transform = '';
-            startY = 0;
-        });
-
-        // 修改渲染入口，增加居中包装器
         function renderResult(contentHTML) {
             resultDisplay.innerHTML = `<div class="center-wrapper">${contentHTML}</div>`;
             resultStage.classList.add('show');
-            // 重置滚动位置
             resultStage.scrollTop = 0;
         }
 
@@ -790,7 +767,7 @@
                 const num = neonEl.getAttribute('data-person');
                 const meaning = personMeanings[num];
                 if (!meaning || meaning === '暂无解释') return;
-                openSheet(`🔍 数字 ${num} 的能量解释`, meaning);
+                openModal(`🔍 数字 ${num} 的能量解释`, meaning);
             }
 
             if (groupEl) {
@@ -798,7 +775,7 @@
                 const num = groupEl.getAttribute('data-number');
                 const meaning = meanings[num];
                 if (!meaning || meaning === '暂无解释') return;
-                openSheet(`🔍 ${num} 的解释`, meaning);
+                openModal(`🔍 ${num} 的解释`, meaning);
             }
         });
 
@@ -824,7 +801,6 @@
                             <span>输入生日并点击上方功能</span>
                         </div>
                     `;
-                    // 重置居中包装器
                     resultDisplay.innerHTML = `<div class="center-wrapper">${resultDisplay.innerHTML}</div>`;
                 }, 300);
                 return;
@@ -857,18 +833,29 @@
                         break;
                     }
                     case 'groups': {
-                        const groups = computeGroups(digits);
+                        const rawGroups = computeGroups(digits);
+                        
+                        const counts = new Map();
+                        rawGroups.forEach(num => {
+                            counts.set(num, (counts.get(num) || 0) + 1);
+                        });
+
                         html = '<div class="group-grid">';
-                        groups.forEach((num, idx) => {
+                        
+                        counts.forEach((count, num) => {
                             const hasMeaning = meanings[num] && meanings[num] !== '暂无解释';
                             const clickableClass = hasMeaning ? '' : 'no-meaning';
+                            
+                            const multiplierHtml = count > 1 ? `<div class="multiplier">x${count}</div>` : '';
+
                             html += `
                                 <div class="group-item ${clickableClass}" data-number="${num}">
                                     <div class="num">${num}</div>
-                                    <div class="idx">第${idx + 1}组</div>
+                                    ${multiplierHtml}
                                 </div>
                             `;
                         });
+                        
                         html += '</div>';
                         html += `<div style="margin-top:16px; font-size:12px; color:#64748b; text-align:center;">输入生日: ${digits.join('')}</div>`;
                         break;
@@ -893,7 +880,6 @@
             }, 200);
         }
 
-        // 输入框限制数字
         ['birthYear', 'birthMonth', 'birthDay'].forEach(id => {
             const el = document.getElementById(id);
             el.addEventListener('input', function() {
