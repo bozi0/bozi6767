@@ -39,7 +39,6 @@
             user-select: none;
         }
 
-        /* 背景极光流影 */
         body::before {
             content: '';
             position: absolute;
@@ -71,12 +70,10 @@
             z-index: 1;
             padding: 20px 16px;
             padding-top: calc(20px + env(safe-area-inset-top));
+            padding-bottom: calc(20px + var(--safe-bottom));
         }
 
-        header {
-            margin-bottom: 20px;
-            flex-shrink: 0;
-        }
+        header { margin-bottom: 20px; flex-shrink: 0; }
 
         h1 {
             font-size: 26px;
@@ -91,22 +88,11 @@
             animation: shine 5s linear infinite;
         }
 
-        @keyframes shine {
-            to { background-position: 200% center; }
-        }
+        @keyframes shine { to { background-position: 200% center; } }
 
-        .subtitle {
-            font-size: 13px;
-            color: var(--text-sub);
-        }
+        .subtitle { font-size: 13px; color: var(--text-sub); }
 
-        /* 输入区域 */
-        .input-section {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-shrink: 0;
-        }
+        .input-section { display: flex; gap: 10px; margin-bottom: 20px; flex-shrink: 0; }
 
         .input-wrapper {
             flex: 1;
@@ -148,7 +134,6 @@
             padding: 0;
         }
 
-        /* 底部滑动光线 */
         .input-wrapper::after {
             content: '';
             position: absolute;
@@ -160,12 +145,8 @@
             transition: width 0.3s ease, left 0.3s ease;
         }
 
-        .input-wrapper:focus-within::after {
-            width: 100%;
-            left: 0;
-        }
+        .input-wrapper:focus-within::after { width: 100%; left: 0; }
 
-        /* 功能按钮网格 */
         .button-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -193,10 +174,7 @@
             will-change: transform;
         }
 
-        .action-btn .icon {
-            font-size: 18px;
-            margin-bottom: 4px;
-        }
+        .action-btn .icon { font-size: 18px; margin-bottom: 4px; }
 
         .action-btn.active {
             background: linear-gradient(135deg, var(--primary), #6d28d9);
@@ -206,29 +184,41 @@
             transform: scale(1.02);
         }
 
-        .action-btn:active {
-            transform: scale(0.95);
-        }
+        .action-btn:active { transform: scale(0.95); }
 
-        /* 结果展示区 */
+        /* ==================== 核心修复：结果容器 ==================== */
         .result-stage {
             flex: 1;
             position: relative;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
             min-height: 0;
+            width: 100%;
             opacity: 0;
             transform: translateY(15px);
             transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             pointer-events: none;
+            overflow-y: auto; /* 关键：允许内部滚动 */
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
         }
+
+        .result-stage::-webkit-scrollbar { display: none; }
 
         .result-stage.show {
             opacity: 1;
             transform: translateY(0);
             pointer-events: auto;
+        }
+
+        /* 居中包装器：解决 flex 居中 + 溢出滚动的裁剪 bug */
+        .center-wrapper {
+            width: 100%;
+            margin: auto 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 0 30px;
         }
 
         /* 霓虹大数字 */
@@ -247,11 +237,8 @@
             cursor: pointer;
         }
 
-        .neon-number.clickable:active {
-            transform: scale(0.9);
-        }
+        .neon-number.clickable:active { transform: scale(0.9); }
 
-        /* 无解释的大数字：改成银灰色发光，依然保持呼吸！ */
         .neon-number.no-meaning {
             background: linear-gradient(180deg, #e2e8f0, #64748b);
             -webkit-background-clip: text;
@@ -277,44 +264,32 @@
             backdrop-filter: blur(10px);
         }
 
-        /* ==================== 12组主性格重构（大幅改动！） ==================== */
+        /* ==================== 12组主性格重构（缩小比例，适配小屏） ==================== */
         .group-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            gap: 8px; /* 缩小间距 */
             width: 100%;
             padding: 0 4px;
-            margin-top: 16px;
+            margin-top: 10px;
         }
 
         .group-item {
-            /* 真正的玻璃拟态 */
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 18px;
-            padding: 16px 4px;
+            border-radius: 14px; /* 减小圆角 */
+            padding: 12px 2px; /* 大幅缩小内边距 */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             cursor: pointer;
             position: relative;
             overflow: hidden;
-        }
-
-        /* 可点击卡片的紫色边缘光晕 */
-        .group-item::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            border-radius: 18px;
-            box-shadow: inset 0 0 20px rgba(139, 92, 246, 0.1);
-            opacity: 0;
-            transition: opacity 0.3s ease;
         }
 
         .group-item:active {
@@ -323,36 +298,29 @@
             border-color: rgba(139, 92, 246, 0.3);
         }
 
-        .group-item:active::before {
-            opacity: 1;
-        }
-
         .group-item .num {
-            font-size: 24px;
+            font-size: 20px; /* 缩小字号 */
             font-weight: 900;
             color: #ffffff;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             background: linear-gradient(180deg, #fff, #a78bfa);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
         }
 
-        /* 小字“第X组”变成了毛玻璃胶囊 */
         .group-item .idx {
-            font-size: 10px;
+            font-size: 9px; /* 缩小字号 */
             color: var(--text-sub);
-            margin-top: 8px;
+            margin-top: 6px;
             font-weight: 600;
             background: rgba(255, 255, 255, 0.08);
-            padding: 2px 8px;
-            border-radius: 10px;
+            padding: 1px 6px;
+            border-radius: 8px;
             backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
         }
 
-        /* 无解释的卡片：银灰色，但依然精致 */
         .group-item.no-meaning {
             cursor: default;
             background: rgba(255, 255, 255, 0.02);
@@ -365,7 +333,6 @@
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
         }
 
         .group-item.no-meaning .idx {
@@ -373,7 +340,6 @@
             color: #64748b;
         }
 
-        /* 遮罩层和底部抽屉 */
         .bottom-sheet {
             position: fixed;
             bottom: 0;
@@ -396,9 +362,7 @@
             will-change: transform;
         }
 
-        .bottom-sheet.open {
-            transform: translateY(0);
-        }
+        .bottom-sheet.open { transform: translateY(0); }
 
         .sheet-handle {
             width: 40px;
@@ -447,10 +411,7 @@
             transition: opacity 0.3s ease;
         }
 
-        .overlay.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .overlay.show { opacity: 1; pointer-events: auto; }
 
         .empty-state {
             display: flex;
@@ -481,7 +442,6 @@
         <div class="subtitle">输入出生年月日，解码你的数字密码</div>
     </header>
 
-    <!-- 输入区 -->
     <div class="input-section">
         <div class="input-wrapper">
             <label>年 (4位)</label>
@@ -497,7 +457,6 @@
         </div>
     </div>
 
-    <!-- 功能按钮网格 -->
     <div class="button-grid" id="buttonGrid">
         <button class="action-btn active" data-action="person"><span class="icon">🧑</span>几号人</button>
         <button class="action-btn" data-action="groups"><span class="icon">🔢</span>12组主性格</button>
@@ -509,21 +468,16 @@
         <button class="action-btn" data-action="reset" style="color:#ef4444; border-color:rgba(239,68,68,0.3)"><span class="icon">🧹</span>重置</button>
     </div>
 
-    <!-- 结果展示区 -->
+    <!-- 结果区，加上了独立的滚动处理 -->
     <div class="result-stage show" id="resultStage">
         <div id="resultDisplay">
-            <div class="empty-state">
-                <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                <span>输入生日并点击上方功能</span>
-            </div>
+            <!-- 内容动态插入 -->
         </div>
     </div>
 </div>
 
-<!-- 遮罩层 -->
 <div class="overlay" id="overlay"></div>
 
-<!-- 底部抽屉 -->
 <div class="bottom-sheet" id="bottomSheet">
     <div class="sheet-handle"></div>
     <div class="sheet-content">
@@ -534,7 +488,7 @@
 
 <script>
     (function() {
-        // ==================== 数字释义库（完整版）====================
+        // ==================== 数字释义库 ====================
         const meanings = {
             "112": "性格独立、强势。做事纠结，容易半途而废，虎头蛇尾，说一套做一套。多读书，多突破自我，适合晚婚。注意过于自信的言谈在与人交往时，容易被陷害。喜欢冲动地为别人做事，但结果往往处理不好，还被人议论。化解之道是多读书，可少走弯路，或找有经验的人多学习，经过长期磨练或多读书。晚婚密码。",
             "191": "独立自主，靠个人能力来达到事业上的成功和成就。当领导的号码，但要注意因过于关注事业而导致感情分裂。成功后可能还是一个人，夫妻情感需要修炼。很容易成功，喜欢享受独处的感觉，喜欢独立经营，所有的事独立包办，要成功要靠自己。但切忌不要太强势，否则容易成为孤独的管理者。晚婚（30岁以后）比较理想。",
@@ -620,7 +574,6 @@
             "133": "暂无详细官方解释，可能结合了1的独立与3的创意，具体请参考相关书籍。"
         };
 
-        // ==================== 1-9数字能量解释（完整版）====================
         const personMeanings = {
             "1": "🔹 高频·正面：独立，创意，勇敢，力量，创造性，号召力，果断，原创性，独特，进取，乐观，可信任\n🔸 低频·负面：自我为中心，说教，偏执，自私，冲动，傲慢自大，咄咄逼人，吹牛，冷酷，苛求，虚荣，居高临下，强硬，攀比\n💭 忧虑·恐惧：伤自尊，不被重视，做配角，不如别人",
             "2": "🔹 高频·正面：耐心，宽容，善于分析，沟通，直觉力强，美感出色，配合协调，可靠，安静，平和，善解人意\n🔸 低频·负面：依附，左右不定，无主见，过度敏感，软弱，善于讨好献媚，抱怨，愚昧，沮丧，利用他人，缺乏独立性\n💭 忧虑·恐惧：独处，做决定，无依靠",
@@ -801,7 +754,6 @@
 
         overlay.addEventListener('click', closeSheet);
 
-        // 底部抽屉滑动关闭逻辑
         let startY = 0;
         bottomSheet.addEventListener('touchstart', e => {
             if (e.target.closest('.sheet-handle') || bottomSheet.scrollTop === 0) {
@@ -812,23 +764,23 @@
         bottomSheet.addEventListener('touchmove', e => {
             if (startY > 0) {
                 const dy = e.touches[0].clientY - startY;
-                if (dy > 0) {
-                    bottomSheet.style.transform = `translateY(${dy}px)`;
-                }
+                if (dy > 0) bottomSheet.style.transform = `translateY(${dy}px)`;
             }
         }, { passive: true });
 
-        bottomSheet.addEventListener('touchend', e => {
+        bottomSheet.addEventListener('touchend', () => {
             bottomSheet.style.transform = '';
             startY = 0;
         });
 
+        // 修改渲染入口，增加居中包装器
         function renderResult(contentHTML) {
-            resultDisplay.innerHTML = contentHTML;
+            resultDisplay.innerHTML = `<div class="center-wrapper">${contentHTML}</div>`;
             resultStage.classList.add('show');
+            // 重置滚动位置
+            resultStage.scrollTop = 0;
         }
 
-        // 点击事件：无解释的直接拦截
         resultDisplay.addEventListener('click', e => {
             const neonEl = e.target.closest('.neon-number');
             const groupEl = e.target.closest('.group-item');
@@ -856,7 +808,6 @@
 
             document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-
             handleAction(btn.getAttribute('data-action'));
         });
 
@@ -873,6 +824,8 @@
                             <span>输入生日并点击上方功能</span>
                         </div>
                     `;
+                    // 重置居中包装器
+                    resultDisplay.innerHTML = `<div class="center-wrapper">${resultDisplay.innerHTML}</div>`;
                 }, 300);
                 return;
             }
